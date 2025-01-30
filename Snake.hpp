@@ -42,15 +42,40 @@ private:
 	};
 
 
-	std::string board;					// A 15 x 15 board for the game plus a border making the string 17 x 17
-	std::vector<Coord> snake;			// Holds the locations of the snake (index 0 is always head)
-	Coord food;							// Holds the current location of the food
-	std::unique_ptr<std::mt19937> rng;	// The rng for determining the next food location
+	std::string board;							// A 15 x 15 board for the game plus a border making the string 17 x 17
+	std::vector<Coord> snake;					// Holds the locations of the snake (index 0 is always head)
+	Coord food;									// Holds the current location of the food
+	std::unique_ptr<std::mt19937> rng;			// The rng for determining the next food location
+	constexpr static unsigned char dim = 17;	// The size of the board
 
 
 	// Print the current state of the board
 	void print_board() {
 		std::cout << "\n\n" << board << std::endl;
+	}
+
+
+	// Set the board to INITIAL BOARD
+	void reset_board() {
+		board.assign(INITIAL_BOARD);
+	}
+
+
+	// Place the Snake on the board
+	void place_snake() {
+
+	}
+
+
+	// Updates the snake's position given a specific input
+	void update_snake(Direction dir, bool ate) {
+
+	}
+
+
+	// Randomly generate the next food location in a valid space
+	Coord generate_next_food() {
+
 	}
 
 public:
