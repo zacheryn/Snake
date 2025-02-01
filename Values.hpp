@@ -14,6 +14,5 @@ constexpr unsigned char KEY_ARROW_DOWN = 80;
 constexpr unsigned char KEY_ARROW_LEFT = 75;
 constexpr unsigned char KEY_ARROW_RIGHT = 77;
 constexpr unsigned char KEY_ESCAPE = 27;
-constexpr unsigned char MAX_LENGTH = 225;
 
 #endif
