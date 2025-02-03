@@ -29,6 +29,17 @@ private:
 
 		Coord(size_t _x, size_t _y) :
 		x{ _x }, y{ _y } {}
+
+		Coord(const Coord& other) :
+		x{ other.x }, y{ other.y } {}
+
+		friend bool operator==(const Coord& lhs, const Coord& rhs) {
+			return lhs.x == rhs.x && lhs.y == rhs.y;
+		}
+
+		friend bool operator!=(const Coord& lhs, const Coord& rhs) {
+			return lhs.x != rhs.x || lhs.y != rhs.y;
+		}
 	};
 
 
@@ -59,6 +70,9 @@ private:
 	// The maximum length of the snake. When reached, you win.
 	constexpr static size_t MAX_LENGTH = 225;
 
+	// True while the snake is still alive
+	bool alive = true;
+
 
 	// Print the current state of the board
 	void print_board() {
@@ -81,8 +95,57 @@ private:
 	}
 
 
+	// Place the food at the given location
+	void place_food(const Coord loc) {
+		if (loc.x > 14 || loc.y > 14) throw std::invalid_argument("Both x and y must be less than or equal to 14");
+
+		if (board[(1 + loc.y) * 17 + loc.x + 1] != ' ') throw std::domain_error("The given space must be empty");
+
+		board[(1 + loc.y) * 17 + loc.x + 1] = FOOD;
+	}
+
+
 	// Updates the snake's position given a specific input
-	void update_snake(Direction dir, bool ate) {
+	void update_snake(const Direction dir, const bool ate) {
+		if (ate) {
+			Coord next(snake.front());
+			switch (dir) {
+			case Direction::Up:
+				++next.y;
+				if (next.y > 14) alive = false;
+				break;
+			case Direction::Down:
+				if (next.y == 0) {
+					alive = false;
+					break;
+				}
+				--next.y;
+				break;
+			case Direction::Left:
+				if (next.x == 0) {
+					alive = false;
+					break;
+				}
+				--next.x;
+				break;
+			case Direction::Right:
+				++next.x;
+				if (next.x > 14) alive = false;
+				break;
+			}
+
+			if (!alive) return;
+
+			for (const Coord& c : snake)
+				if (c == next) {
+					alive == false;
+					return;
+				}
+
+			snake.insert(snake.begin(), next);
+			return;
+		}
+
 
 	}
 
