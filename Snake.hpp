@@ -4,13 +4,13 @@
 #define SNAKE_HPP
 
 #include <conio.h>
+#include <deque>
 #include <iostream>
 #include <memory>
 #include <random>
 #include <string>
 #include <time.h>
 #include "Values.hpp"
-#include <vector>
 
 // (0, 0) is bottom left of board
 
@@ -56,7 +56,7 @@ private:
 	std::string board;
 
 	// Holds the locations of the snake (index 0 is always head)
-	std::vector<Coord> snake;
+	std::deque<Coord> snake;
 
 	// Holds the current location of the food
 	Coord food;
@@ -80,6 +80,13 @@ private:
 	}
 
 
+	// Return a reference of the specified character
+	char& grab_char(const Coord& c) {
+		if (c.x > 14 || c.y > 14) throw std::invalid_argument("Both x and y must be less than or equal to 14");
+		return board[(1 + c.y) * 17 + c.x + 1];
+	}
+
+
 	// Set the board to INITIAL BOARD
 	void reset_board() {
 		board.assign(INITIAL_BOARD);
@@ -89,9 +96,9 @@ private:
 	// Place the Snake on the board
 	void place_snake() {
 		for (const Coord c : snake) {
-			board[(1 + c.y) * 17 + c.x + 1] = BODY;
+			grab_char(c) = BODY;
 		}
-		board[(1 + snake.front().y) * 17 + snake.front().x + 1] = HEAD;
+		grab_char(snake.front()) = HEAD;
 	}
 
 
@@ -99,50 +106,46 @@ private:
 	void place_food(const Coord loc) {
 		if (loc.x > 14 || loc.y > 14) throw std::invalid_argument("Both x and y must be less than or equal to 14");
 
-		if (board[(1 + loc.y) * 17 + loc.x + 1] != ' ') throw std::domain_error("The given space must be empty");
+		if (grab_char(loc) != ' ') throw std::domain_error("The given space must be empty");
 
-		board[(1 + loc.y) * 17 + loc.x + 1] = FOOD;
+		grab_char(loc) = FOOD;
 	}
 
 
 	// Updates the snake's position given a specific input
-	void update_snake(const Direction dir, const bool ate) {
-		if (ate) {
-			Coord next(snake.front());
-			switch (dir) {
-			case Direction::Up:
-				++next.y;
-				if (next.y > 14) alive = false;
-				break;
-			case Direction::Down:
-				if (next.y == 0) {
-					alive = false;
-					break;
-				}
-				--next.y;
-				break;
-			case Direction::Left:
-				if (next.x == 0) {
-					alive = false;
-					break;
-				}
-				--next.x;
-				break;
-			case Direction::Right:
-				++next.x;
-				if (next.x > 14) alive = false;
+	void update_snake(const Direction dir) {
+		Coord next(snake.front());
+		switch (dir) {
+		case Direction::Up:
+			++next.y;
+			if (next.y > 14) alive = false;
+			break;
+		case Direction::Down:
+			if (next.y == 0) {
+				alive = false;
 				break;
 			}
+			--next.y;
+			break;
+		case Direction::Left:
+			if (next.x == 0) {
+				alive = false;
+				break;
+			}
+			--next.x;
+			break;
+		case Direction::Right:
+			++next.x;
+			if (next.x > 14) alive = false;
+			break;
+		}
 
-			if (!alive) return;
+		if (!alive) return;
 
-			for (const Coord& c : snake)
-				if (c == next) {
-					alive == false;
-					return;
-				}
+		bool ate = grab_char(next) == FOOD;
 
-			snake.insert(snake.begin(), next);
+		if (ate) {
+			snake.push_front(next);
 			return;
 		}
 
@@ -152,7 +155,7 @@ private:
 
 	// Randomly generate the next food location in a valid space
 	Coord generate_next_food() {
-		std::vector<Coord> available;
+		std::deque<Coord> available;
 		for (size_t y = 0; y < 15; ++y) {
 			for (size_t x = 0; x < 15; ++x) {
 				if (board[(1 + y) * 17 + x + 1] == ' ')
