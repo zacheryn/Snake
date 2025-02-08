@@ -167,7 +167,7 @@ private:
 		std::deque<Coord> available;
 		for (size_t y = 0; y < 15; ++y) {
 			for (size_t x = 0; x < 15; ++x) {
-				if (board[(1 + y) * 17 + x + 1] == ' ')
+				if (grab_char(Coord(x, y)) == ' ')
 					available.emplace_back(x, y);
 			}
 		}
