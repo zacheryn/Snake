@@ -83,7 +83,7 @@ private:
 	// Return a reference of the specified character
 	char& grab_char(const Coord& c) {
 		if (c.x > 14 || c.y > 14) throw std::invalid_argument("Both x and y must be less than or equal to 14");
-		return board[(1 + c.y) * 17 + c.x + 1];
+		return board[(1 + c.y) * 18 + c.x + 1];
 	}
 
 
@@ -113,7 +113,8 @@ private:
 
 
 	// Updates the snake's position given a specific input
-	void update_snake(const Direction dir) {
+	// Returns true when the snake successfully ate food
+	bool update_snake(const Direction dir) {
 		Coord next(snake.front());
 		switch (dir) {
 		case Direction::Up:
@@ -140,16 +141,24 @@ private:
 			break;
 		}
 
-		if (!alive) return;
+		if (!alive) return false;
 
 		bool ate = grab_char(next) == FOOD;
 
 		if (ate) {
 			snake.push_front(next);
-			return;
+			return true;
 		}
 
+		for(std::size_t i = 0; i < snake.size() - 1; ++i)
+			if (snake[i] == next) {
+				alive = false;
+				return false;
+			}
 
+		snake.pop_back();
+		snake.push_front(next);
+		return false;
 	}
 
 
@@ -167,7 +176,49 @@ private:
 
 		std::uniform_int_distribution<size_t> dist(0, available.size() - 1);
 
-		return available[dist(rng)];
+		food = available[dist(*rng)];
+
+		return food;
+	}
+
+
+	// Get the input from the player through stdin
+	Direction get_input() {
+		while (true) {
+			unsigned char temp = _getch();
+			if (temp == KEY_ARROW_CHAR1) {
+				switch (_getch()) {
+				case KEY_ARROW_UP:
+					return Direction::Up;
+				case KEY_ARROW_DOWN:
+					return Direction::Down;
+				case KEY_ARROW_LEFT:
+					return Direction::Left;
+				case KEY_ARROW_RIGHT:
+					return Direction::Right;
+				default:
+					std::cout << "\nPressed unknown key: '" << temp << "'\nPlease use arrow keys." << std::endl;
+					break;
+				}
+			}
+			else {
+				std::cout << "\nPressed unknown key: '" << temp << "'\nPlease use arrow keys." << std::endl;
+			}
+		}
+	}
+
+
+	// Play the failure message
+	void lost() {
+		std::cout << "You lost. Better luck next time!\nYou reached a score of "
+				  << snake.size() << std::endl;
+	}
+
+
+	// Play the winning message
+	void won() {
+		std::cout << "You freak of nature. How did you actually do this? You filled the whole box. Congrats!\n"
+				  << "You reached a score of " << snake.size() << std::endl;
 	}
 
 public:
@@ -182,7 +233,31 @@ public:
 
 	// Starts a game of snake
 	void play() {
+		bool ate = true;
+		while (alive) {
+			place_snake();
 
+			if (ate) {
+				place_food(generate_next_food());
+				ate = false;
+			}
+			else {
+				place_food(food);
+			}
+
+			print_board();
+
+			ate = update_snake(get_input());
+
+
+			if (ate && snake.size() == MAX_LENGTH) {
+				won();
+				return;
+			}
+
+			reset_board();
+		}
+		lost();
 	}
 
 };
