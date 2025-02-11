@@ -221,6 +221,17 @@ private:
 				  << "You reached a score of " << snake.size() << std::endl;
 	}
 
+
+	// Play the intro message
+	void intro() {
+		std::cout << "You can control the snake using the arrow keys.\n"
+			  << "Here is a legend of important characters:\n"
+			  << "\t" << FOOD << ": This is the food you must collect to grow\n"
+			  << "\t" << HEAD << ": The head of the snake\n"
+			  << "\t" << BODY << ": The body of the snake\n"
+			  << "\t+, -, and |: These are all border characters\n";
+	}
+
 public:
 
 	// Basic constructor for setting up the initial conditions of the board
@@ -233,6 +244,7 @@ public:
 
 	// Starts a game of snake
 	void play() {
+		intro();
 		bool ate = true;
 		while (alive) {
 			place_snake();
