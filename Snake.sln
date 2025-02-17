@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Snake", "Snake.vcxproj", "{CA97BF7F-8DB1-48A1-B8DA-12C0E91B9CE6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XAudio2", "..\XAudio2\XAudio2.vcxproj", "{CE3AE784-2DC9-4E76-B190-998FC63B9DCA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XAudio2", "XAudio2\XAudio2.vcxproj", "{CE3AE784-2DC9-4E76-B190-998FC63B9DCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
