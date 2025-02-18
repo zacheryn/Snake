@@ -73,6 +73,12 @@ private:
 	// True while the snake is still alive
 	bool alive = true;
 
+	// The audio engine for the game
+	Audio audio;
+
+	// Volume control that the player can choose [0 - 1]
+	float volume = 1;
+
 
 	// Print the current state of the board
 	void print_board() {
@@ -235,7 +241,47 @@ private:
 public:
 
 	// Basic constructor for setting up the initial conditions of the board
-	Snake() : board{ INITIAL_BOARD }, rng{ new std::mt19937(time(NULL)) } {
+	Snake() : board{ INITIAL_BOARD }, rng{ new std::mt19937(time(NULL)) }, audio{ "" } {
+		snake.emplace_back(7, 7);
+		snake.emplace_back(6, 7);
+		snake.emplace_back(5, 7);
+	}
+
+
+	// Provide a specfic seed for the rng
+	Snake(unsigned int seed) : board{ INITIAL_BOARD }, rng{ new std::mt19937(seed) }, audio{ "" } {
+		snake.emplace_back(7, 7);
+		snake.emplace_back(6, 7);
+		snake.emplace_back(5, 7);
+	}
+
+
+	// Provide a path for audio with char*
+	Snake(char* path) : board{ INITIAL_BOARD }, rng{ new std::mt19937(time(NULL)) }, audio{ path } {
+		snake.emplace_back(7, 7);
+		snake.emplace_back(6, 7);
+		snake.emplace_back(5, 7);
+	}
+
+
+	// Provide a path for audio with std::string
+	Snake(std::string path) : board{ INITIAL_BOARD }, rng{ new std::mt19937(time(NULL)) }, audio{ path } {
+		snake.emplace_back(7, 7);
+		snake.emplace_back(6, 7);
+		snake.emplace_back(5, 7);
+	}
+
+
+	// Provide a path for audio with char* and a seed for the rng
+	Snake(char* path, unsigned int seed) : board{ INITIAL_BOARD }, rng{ new std::mt19937(seed) }, audio{ path } {
+		snake.emplace_back(7, 7);
+		snake.emplace_back(6, 7);
+		snake.emplace_back(5, 7);
+	}
+
+
+	// Provide a path for audio with std::string and a seed for the rng
+	Snake(std::string path, unsigned int seed) : board{ INITIAL_BOARD }, rng{ new std::mt19937(seed) }, audio{ path } {
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
