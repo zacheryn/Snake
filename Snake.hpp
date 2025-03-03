@@ -6,6 +6,7 @@
 #include "Audio.hpp"
 #include <conio.h>
 #include <deque>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
@@ -64,11 +65,14 @@ private:
 	// The rng for determining the next food location
 	std::unique_ptr<std::mt19937> rng;
 
-	// The size of the board
-	constexpr static size_t dim = 17;
-
 	// The maximum length of the snake. When reached, you win.
 	constexpr static size_t MAX_LENGTH = 225;
+
+	// The previous high score of all players on this machine (-1 if no high score is set)
+	int highscore = -1;
+
+	// Whether to write to highscore.txt on game finish (write on true)
+	bool write_hs = true;
 
 	// True while the snake is still alive
 	bool alive = true;
@@ -238,6 +242,58 @@ private:
 			  << "\t+, -, and |: These are all border characters\n";
 	}
 
+
+	// Ask the player if it's okay to overwrite a poorly formatted highscore.txt file
+	void ask_write_hs() {
+		std::cout << "`highscore.txt` was incorrectly formatted and cannot be correctly read.\n"
+				  << "Would you like to overwrite the old `highscore.txt`? (Y/n)\n";
+
+		std::string buffer;
+		std::cin >> buffer;
+
+		while (buffer != "y" || buffer != "Y" || buffer != "n" || buffer != "N")
+			std::cin >> buffer;
+
+		if (buffer != "n" || buffer != "N") {
+			write_hs = false;
+		}
+
+		highscore = -1;
+	}
+
+
+	// Grab the high score from highscore.txt
+	void read_highscore() {
+		std::ifstream fin("highscore.txt");
+
+		if (!fin.is_open()) {
+			highscore = -1;
+			return;
+		}
+
+		std::string buffer;
+		fin >> buffer;
+
+		if (buffer != "highscore:") {
+			ask_write_hs();
+			return;
+		}
+
+		fin >> buffer;
+
+		highscore = std::stoi(buffer);
+	}
+
+
+	// Write the player's score to highscore.txt
+	void write_hs() {
+		std::ofstream fout("highscore.txt");
+
+		if (!fout.is_open()) return;
+
+		fout << "highscore: " << snake.size();
+	}
+
 public:
 
 	// Basic constructor for setting up the initial conditions of the board
@@ -245,6 +301,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
@@ -253,6 +310,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
@@ -261,6 +319,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
@@ -269,6 +328,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
@@ -277,6 +337,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
@@ -285,6 +346,7 @@ public:
 		snake.emplace_back(7, 7);
 		snake.emplace_back(6, 7);
 		snake.emplace_back(5, 7);
+		read_highscore();
 	}
 
 
