@@ -72,7 +72,7 @@ private:
 	int highscore = -1;
 
 	// Whether to write to highscore.txt on game finish (write on true)
-	bool write_hs = true;
+	bool write = true;
 
 	// True while the snake is still alive
 	bool alive = true;
@@ -222,6 +222,7 @@ private:
 	void lost() {
 		std::cout << "You lost. Better luck next time!\nYou reached a score of "
 				  << snake.size() << std::endl;
+		if (write) output_hs();
 	}
 
 
@@ -229,6 +230,26 @@ private:
 	void won() {
 		std::cout << "You freak of nature. How did you actually do this? You filled the whole box. Congrats!\n"
 				  << "You reached a score of " << snake.size() << std::endl;
+		if (write) output_hs();
+	}
+
+
+	// Output highscore results to player
+	void output_hs() {
+		if (highscore == -1) {
+			std::cout << "Congratulations, you set the first highcore of " << snake.size() << '.' << std::endl;
+			write_hs();
+		}
+		else if (snake.size() > highscore) {
+			std::cout << "Congratulations, you have beat the previous of highscore of "
+					  << highscore << " by " << snake.size() - highscore
+					  << "\nThe new highscore is " << snake.size() << '.' << std::endl;
+			write_hs();
+		}
+		else {
+			std::cout << "The previous highscore still stands. You are still " << highscore - snake.size()
+					  << " from the current highscore of " << highscore << '.' << std::endl;
+		}
 	}
 
 
@@ -251,11 +272,12 @@ private:
 		std::string buffer;
 		std::cin >> buffer;
 
-		while (buffer != "y" || buffer != "Y" || buffer != "n" || buffer != "N")
+		while (buffer != "y" && buffer != "Y" && buffer != "n" && buffer != "N")
 			std::cin >> buffer;
-
-		if (buffer != "n" || buffer != "N") {
-			write_hs = false;
+		std::cout << "This is buffer after loop: " << buffer << std::endl;
+		if (buffer == "n" || buffer == "N") {
+			std::cout << "Set write to false" << std::endl;
+			write = false;
 		}
 
 		highscore = -1;
