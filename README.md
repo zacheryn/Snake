@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a console based Snake game for Windows constrolled with the arrow keys. There is support for audio and high score tracking. You can download the latest release [here](https://github.com/zacheryn/Snake/releases/download/v1.1.0/Snake.zip).
+This is a console based Snake game for Windows constrolled with the arrow keys. There is support for audio and high score tracking. You can download the latest release [here](https://github.com/zacheryn/Snake/releases/download/v1.2.0/Snake.zip) or by navigating to it on the menu on the left.
 
 ## High Score Tracking
 
