@@ -11,7 +11,6 @@
 #include <random>
 #include <string>
 #include <time.h>
-#include "Values.hpp"
 
 // (0, 0) is bottom left of board
 
@@ -51,6 +50,23 @@ private:
 		Left,
 		Right
 	};
+
+
+	// Useful constants
+	static constexpr char INITIAL_BOARD[] = "+---------------+\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n|               |\n+---------------+";
+	static constexpr char HEAD = 'H';
+	static constexpr char BODY = 'X';
+	static constexpr char FOOD = 'O';
+	static constexpr unsigned char KEY_ARROW_CHAR1 = 224;
+	static constexpr unsigned char KEY_ARROW_UP = 80;
+	static constexpr unsigned char KEY_ARROW_DOWN = 72;
+	static constexpr unsigned char KEY_ARROW_LEFT = 75;
+	static constexpr unsigned char KEY_ARROW_RIGHT = 77;
+	static constexpr unsigned char KEY_ESCAPE = 27;
+	static constexpr char BG_MUSIC[] = "music.wav";
+	static constexpr char DEATH_SOUND[] = "death.wav";
+	static constexpr char FOOD_SOUND[] = "food.wav";
+	static constexpr char VICTORY_MUSIC[] = "victory.wav";
 
 
 	// A 15 x 15 board for the game plus a border making the string 17 x 17
@@ -374,14 +390,18 @@ public:
 
 	// Starts a game of snake
 	void play() {
+		audio.Play(BG_MUSIC, 0.5, true);
 		intro();
 		bool ate = true;
+		bool first = true;
 		while (alive) {
 			place_snake();
 
 			if (ate) {
+				if (!first) audio.Play(FOOD_SOUND, 1.0, false);
 				place_food(generate_next_food());
 				ate = false;
+				first = false;
 			}
 			else {
 				place_food(food);
@@ -393,12 +413,17 @@ public:
 
 
 			if (ate && snake.size() == MAX_LENGTH) {
+				audio.EndLoop(BG_MUSIC);
+				audio.Play(VICTORY_MUSIC, 1.0, true);
 				won();
 				return;
 			}
 
 			reset_board();
 		}
+
+		audio.EndLoop(BG_MUSIC);
+		audio.Play(DEATH_SOUND, 1.0, false);
 		lost();
 	}
 

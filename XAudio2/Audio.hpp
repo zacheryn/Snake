@@ -6,6 +6,7 @@
 #include <xaudio2.h>
 #pragma comment(lib,"xaudio2.lib")
 #include <string>
+#include <unordered_map>
 #include <iostream>
 
 #ifdef _XBOX //Big-Endian
@@ -34,6 +35,7 @@ private:
 	IXAudio2* pXAudio2 = nullptr; //Base pointer to engine
 	IXAudio2MasteringVoice* pMasterVoice = nullptr; //Pointer to mastering voice, final destination for all audio
 	std::string BasePath;
+    std::unordered_map<std::string, IXAudio2SourceVoice*> loopingVoices;
 
 
 	//Finds the chunks of a valid audio file pulled directlt from XAudio2 documentation
@@ -191,8 +193,20 @@ public:
         if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer))) return hr;
         pSourceVoice->SetVolume(volume);
         if (FAILED(hr = pSourceVoice->Start(0))) return hr;
+        if (ShouldLoop) loopingVoices.insert(std::pair<std::string, IXAudio2SourceVoice*>(filename, pSourceVoice));
 
         return 0;
+    }
+
+
+    // End the looping audio of the given filename should it exist
+    void EndLoop(std::string filename) {
+        filename = BasePath + filename;
+        if (loopingVoices.find(filename) == loopingVoices.end()) return;
+
+        IXAudio2SourceVoice* pSourceVoice = loopingVoices.at(filename);
+        pSourceVoice->Stop();
+        loopingVoices.erase(filename);
     }
 };
 

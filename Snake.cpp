@@ -3,8 +3,9 @@
 
 #include "Snake.hpp"
 
-int main() {
-    Snake s;
+int main(int argc, char* argv[]) {
+    std::string path(argv[0]);
+    Snake s(path.substr(0, path.find_last_of("\\/")) + "\\Sounds\\");
 
     s.play();
 
